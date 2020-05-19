@@ -1,0 +1,26 @@
+@tailwind base;
+
+.active-tab {
+    @apply text-white bg-gray-900;
+}
+.non-active-tab {
+    @apply text-gray-300;
+}
+.non-active-tab:hover {
+    @apply text-white bg-gray-700;
+}
+
+.active-tab-mobile {
+    @apply text-white bg-gray-900;
+}
+
+.non-active-tab-mobile {
+    @apply text-gray-300;
+}
+
+.non-active-tab-mobile:hover {
+    @apply text-white bg-gray-700;
+}
+
+@tailwind components;
+@tailwind utilities;
