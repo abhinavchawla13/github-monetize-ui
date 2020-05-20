@@ -1,56 +1,74 @@
 <template>
   <div>
-    <RepoInformation />
-    <Markdown />
+    <RepoInformation
+      v-if="currentRepoLoaded"
+      :currentrepo="currentRepo"
+      v-on:editOn="openEditer"
+      v-on:saveMarkdown="saveMarkdown"
+    />
+    <Markdown
+      v-if="currentRepoLoaded"
+      :currentrepomd="currentRepo.markdown"
+      :openEditor="openEditerVal"
+      :currentrepoId="currentRepo._id"
+    />
   </div>
 </template>
 
 <script>
-import * as firebase from "firebase/app";
-import "firebase/auth";
-import axios from "axios";
 import RepoInformation from "@/components/RepoInformation.vue";
 import Markdown from "@/components/Markdown.vue";
+import axios from "axios";
+import * as firebase from "firebase";
 
 export default {
-  props: ["name"],
   components: { RepoInformation, Markdown },
-  data() {
-    return {
-      repos: []
-    };
-  },
-  methods: {
-    getReposInfo: async function() {
-      try {
-        // get firebase token
-        const firebaseToken = await firebase.auth().currentUser.getIdToken();
-        // make call to the backend to login user (or create if it's first time)
-        const result = await axios.get(
-          `${process.env.VUE_APP_API_URL}/users/repos`,
-          {
-            headers: { Authorization: "Bearer " + firebaseToken }
-          }
-        );
-
-        console.log(result);
-        this.repos = result.data.repos;
-        console.log(this.repos);
-      } catch (error) {
-        console.log(error);
-        // Handle Errors here.
-        // var errorCode = error.code;
-        // var errorMessage = error.message;
-        // // The email of the user's account used.
-        // var email = error.email;
-        // // The firebase.auth.AuthCredential type that was used.
-        // var credential = error.credential;
-        // ...
+  props: ["id"],
+  watch: {
+    $route(to, from) {
+      if (
+        to &&
+        to.params &&
+        from &&
+        from.params &&
+        to.params.id != from.params.id
+      ) {
+        this.getCurrentRepoInfo();
       }
     }
   },
-  mounted() {
-    this.getReposInfo();
+  data() {
+    return {
+      currentRepo: {},
+      currentRepoLoaded: false,
+      openEditerVal: false
+    };
+  },
+  async mounted() {
+    try {
+      await this.getCurrentRepoInfo();
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  methods: {
+    getCurrentRepoInfo: async function() {
+      const firebaseToken = await firebase.auth().currentUser.getIdToken();
+      const result = await axios.get(
+        `${process.env.VUE_APP_API_URL}/repos/${this.id}`,
+        {
+          headers: { Authorization: "Bearer " + firebaseToken }
+        }
+      );
+      this.currentRepo = result.data.repo;
+      this.currentRepoLoaded = true;
+    },
+    openEditer: function() {
+      this.openEditerVal = true;
+    },
+    saveMarkdown: function() {
+      this.openEditerVal = false;
+    }
   }
 };
 </script>

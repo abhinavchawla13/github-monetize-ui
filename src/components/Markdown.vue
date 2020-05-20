@@ -1,19 +1,66 @@
 <template>
-  <div id="editor">
-    <textarea :value="input" @input="update"></textarea>
-    <div class="markdown-body" v-html="compiledMarkdown"></div>
+  <div>
+    <div class="labels-head m-auto flex items-stretch">
+      <div class="flex-1 text-right pr-8 mb-2">
+        <span
+          class="px-2 inline-flex text-sm py-1 px-4 leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800 relative"
+          style="bottom: -51px;"
+        >Editor</span>
+      </div>
+      <div class="flex-1 text-right pr-10 mb-2">
+        <span
+          class="mr-1 px-2 inline-flex text-sm py-1 px-4 leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800 relative"
+          style="bottom: -51px;"
+        >Output</span>
+      </div>
+    </div>
+    <div v-if="currentrepomd" id="editor">
+      <textarea
+        :disabled="disabled"
+        v-bind:class="{'opacity-50': disabled}"
+        :value="input"
+        @input="update"
+      />
+      <div class="markdown-body" v-html="compiledMarkdown" />
+    </div>
   </div>
 </template>
 
 <script>
 import marked from "marked";
 import debounce from "lodash.debounce";
+import axios from "axios";
+import * as firebase from "firebase";
 
 export default {
+  props: ["currentrepomd", "openEditor", "currentrepoId"],
+  watch: {
+    openEditor: async function(newVal, oldVal) {
+      // watch it, oldVal refers to editBoxOpen here
+      this.disabled = oldVal;
+      if (oldVal) {
+        try {
+          const firebaseToken = await firebase.auth().currentUser.getIdToken();
+          await axios.patch(
+            `${process.env.VUE_APP_API_URL}/repos/${this.currentrepoId}`,
+            {
+              markdown: this.input
+            },
+            {
+              headers: { Authorization: "Bearer " + firebaseToken }
+            }
+          );
+          this.$noty.success("Markdown saved on the platform");
+        } catch (err) {
+          this.$noty.error("There was an error saving");
+        }
+      }
+    }
+  },
   data() {
     return {
-      input: "# hello",
-      compiledMarkdown2: "<h1>hello</h1>"
+      input: this.currentrepomd,
+      disabled: true
     };
   },
   computed: {

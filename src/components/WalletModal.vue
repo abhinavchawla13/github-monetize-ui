@@ -13,7 +13,7 @@
       To: "opacity-0"
     -->
     <div class="fixed inset-0 transition-opacity">
-      <div class="absolute inset-0 bg-gray-500 opacity-50"></div>
+      <div class="absolute inset-0 bg-gray-500 opacity-50" />
     </div>
     <!-- Modal panel, show/hide based on modal state.  -->
     <div
@@ -37,17 +37,17 @@
           </div>
           <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
             <h3
-              class="text-lg mt-2 leading-6 font-medium text-gray-900"
               id="modal-headline"
+              class="text-lg mt-2 leading-6 font-medium text-gray-900"
             >Add Wallet Pointer</h3>
             <div class="mt-2">
               <label class="mt-4 block text-sm leading-5 font-medium text-gray-700">Pointer link</label>
               <div class="mt-1 relative rounded-md shadow-sm">
                 <input
                   id="pointer_link"
+                  v-model="paymentPointer"
                   class="form-input block w-full px-4 sm:text-sm sm:leading-5 focus:shadow-none"
                   placeholder="$ilp.gatehub.net/"
-                  v-model="paymentPointer"
                 />
               </div>
             </div>
@@ -117,14 +117,14 @@ export default {
             }
           );
           store.commit("updatePaymentPointer", this.paymentPointer);
+          this.$noty.success("Wallet pointer updated!");
           vm.$emit("closePointer", true);
         } catch (err) {
-          console.log(err);
+          console.error(err);
         }
       }
     },
     closeModal: function() {
-      console.log("hello");
       this.$emit("closePointer", true);
     }
   }

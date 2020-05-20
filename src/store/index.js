@@ -16,7 +16,8 @@ const store = new Vuex.Store({
       photoURL: '',
       githubId: '',
       email: '',
-      paymentPointer: ''
+      paymentPointer: '',
+      repos: []
     }
   },
   plugins: [createPersistedState()],
@@ -41,6 +42,9 @@ const store = new Vuex.Store({
     },
     updatePaymentPointer(state, paymentPointer) {
       state.currentUser.paymentPointer = paymentPointer
+    },
+    updateReposInformation(state, repos) {
+      state.currentUser.repos = repos;
     }
   },
 })

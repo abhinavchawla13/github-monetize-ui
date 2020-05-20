@@ -56,7 +56,7 @@ export default {
         });
         router.push("/", () => {});
       } catch (error) {
-        console.log(error);
+        console.error(error);
         // Handle Errors here.
         // var errorCode = error.code;
         // var errorMessage = error.message;

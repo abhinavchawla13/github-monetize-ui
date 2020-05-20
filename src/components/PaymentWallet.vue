@@ -6,19 +6,19 @@
       >
         <h2
           v-if="getWalletPointerNotExists"
-          class="text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-3xl sm:leading-10"
+          class="text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-2xl sm:leading-10"
         >
           Ready to get monetize your work?
-          <br />
-          <span class="text-indigo-600 sm:text-4xl">Let's add your payment wallet pointer.</span>
+          <br>
+          <span class="text-indigo-600 sm:text-4xl">Let's add your payment wallet pointer</span>
         </h2>
         <h2
           v-if="!getWalletPointerNotExists"
-          class="text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-3xl sm:leading-10"
+          class="text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-2xl sm:leading-10"
         >
           Your wallet pointer
-          <br />
-          <span class="text-indigo-600 sm:text-4xl">{{ getWalletPointer}}</span>
+          <br>
+          <span class="text-indigo-600 sm:text-4xl">{{ getWalletPointer }}</span>
         </h2>
         <div class="mt-8 flex lg:flex-shrink-0 lg:mt-0">
           <div class="inline-flex rounded-md shadow">
@@ -37,7 +37,10 @@
         </div>
       </div>
     </div>
-    <WalletModal v-if="showWalletModal" v-on:closePointer="toggleWalletModal($event)" />
+    <WalletModal
+      v-if="showWalletModal"
+      @closePointer="toggleWalletModal($event)"
+    />
   </div>
 </template>
 

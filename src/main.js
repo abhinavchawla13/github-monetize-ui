@@ -7,6 +7,9 @@ import '@/assets/styles/index.css';
 import '@/assets/styles/markdown.css';
 import router from './router'
 import store from './store'
+import moment from 'moment'
+
+import VueNoty from 'vuejs-noty'
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -24,6 +27,18 @@ firebase.initializeApp(firebaseConfig);
 let app;
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false
+
+Vue.filter('formatDate', function (value) {
+  if (value) {
+    return moment(String(value)).format('MMMM Do YYYY, h:mm a')
+  }
+});
+
+Vue.use(VueNoty, {
+  theme: 'relax',
+  layout: 'bottomRight',
+  timeout: 3000,
+})
 
 // eslint-disable-next-line no-unused-vars
 firebase.auth().onAuthStateChanged(user => {

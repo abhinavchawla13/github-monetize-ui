@@ -8,15 +8,57 @@
               <router-link
                 to="/"
                 class="px-3 py-2 rounded-md text-sm font-medium"
-                v-bind:class="{'active-tab': checkTab('dashboard'), 'non-active-tab': !checkTab('dashboard')}"
+                :class="{'active-tab': checkTab('dashboard'), 'non-active-tab': !checkTab('dashboard')}"
                 @click.native="updateTab('dashboard')"
               >Dashboard</router-link>
-              <router-link
-                to="/repos"
+              <a
+                v-if="currentAddedRepos.length"
                 class="ml-4 px-3 py-2 rounded-md text-sm font-medium"
-                v-bind:class="{'active-tab': checkTab('repos'), 'non-active-tab': !checkTab('repos')}"
-                @click.native="updateTab('repos')"
-              >Repositories</router-link>
+                :class="{'active-tab': checkTab('repo'), 'non-active-tab': !checkTab('repo')}"
+                @click="updateTab('repo')"
+              >Repositories</a>
+
+              <!-- <div class="relative left-0 inline-block">
+                <div class="rounded-lg shadow-lg">
+                  <div class="rounded-lg shadow-xs overflow-hidden">
+                    <div class="px-5 py-5 bg-gray-50 space-y-5 sm:px-8 sm:py-8">
+                      <ul class="space-y-4">
+                        <li class="text-base leading-6 truncate">
+                          <a
+                            href="#"
+                            class="font-medium text-gray-900 hover:text-gray-700 transition ease-in-out duration-150"
+                          >Boost your conversion rate</a>
+                        </li>
+                        <li class="text-base leading-6 truncate">
+                          <a
+                            href="#"
+                            class="font-medium text-gray-900 hover:text-gray-700 transition ease-in-out duration-150"
+                          >How to use search engine optimization to drive traffic to your site</a>
+                        </li>
+                        <li class="text-base leading-6 truncate">
+                          <a
+                            href="#"
+                            class="font-medium text-gray-900 hover:text-gray-700 transition ease-in-out duration-150"
+                          >Improve your customer experience</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>-->
+            </div>
+          </div>
+          <div
+            v-if="showRepoList && currentAddedRepos.length"
+            class="hidden md:inline-block w-48 rounded-md shadow-lg z-30"
+            style="margin-left: 111px; max-height: 300px; overflow: hidden; overflow-y: scroll; position: absolute; top: 57px;"
+          >
+            <div class="bg-white" v-for="repo in currentAddedRepos" :key="repo._id">
+              <div
+                class="block px-4 py-4 text-sm text-gray-700 hover:bg-gray-100"
+                role="menuitem"
+                @click="takeToRepoPage(repo._id)"
+              >{{repo.name}}</div>
             </div>
           </div>
         </div>
@@ -26,8 +68,8 @@
             <div class="ml-3 relative">
               <div>
                 <button
-                  class="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:no-shadow"
                   id="user-menu"
+                  class="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:no-shadow"
                 >
                   <div class="mx-3 text-right">
                     <div class="text-base font-medium leading-none text-white">{{ getUserGithub }}</div>
@@ -49,7 +91,7 @@
                   To: "transform opacity-0 scale-95"
               -->
               <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
-                <div class="rounded-md bg-white overflow-hidden" v-if="userMenuActive">
+                <div v-if="userMenuActive" class="rounded-md bg-white overflow-hidden">
                   <div
                     class="block px-4 py-4 text-sm text-gray-700 hover:bg-gray-100"
                     role="menuitem"
@@ -93,20 +135,20 @@
 
       Open: "block", closed: "hidden"
     -->
-    <div class="block md:hidden text-left" v-if="mobileUserMenuActive">
+    <div v-if="mobileUserMenuActive" class="block md:hidden text-left">
       <div class="px-2 pt-2 pb-3 sm:px-3">
         <router-link
           to="/"
           class="block px-3 py-2 mt-1 rounded-md text-base font-medium focus:outline-none focus:text-white focus:bg-gray-700"
-          v-bind:class="{'active-tab-mobile': checkTab('dashboard'), 'non-active-tab-mobile': !checkTab('dashboard')}"
+          :class="{'active-tab-mobile': checkTab('dashboard'), 'non-active-tab-mobile': !checkTab('dashboard')}"
           @click.native="updateTab('dashboard')"
         >Dashboard</router-link>
-        <router-link
+        <!-- <router-link
           to="/repos"
           class="block px-3 py-2 mt-1 rounded-md text-base font-medium focus:outline-none focus:text-white focus:bg-gray-700"
-          v-bind:class="{'active-tab-mobile': checkTab('repos'), 'non-active-tab-mobile': !checkTab('repos')}"
+          :class="{'active-tab-mobile': checkTab('repos'), 'non-active-tab-mobile': !checkTab('repos')}"
           @click.native="updateTab('repos')"
-        >Repositories</router-link>
+        >Repositories</router-link>-->
       </div>
       <div class="pt-4 pb-3 border-t border-gray-700">
         <div class="flex items-center px-5">
@@ -126,6 +168,7 @@
         </div>
       </div>
     </div>
+    <div></div>
   </nav>
 </template>
 
@@ -137,18 +180,22 @@ import store from "../store";
 
 export default {
   name: "Navigation",
-  props: {
-    msg: String
+  props: ["hideShowRepos"],
+  watch: {
+    hideShowRepos: async function(newVal, oldVal) {
+      // watch it, oldVal refers to editBoxOpen here
+      if (newVal != oldVal) {
+        this.showRepoList = false;
+      }
+    }
   },
   data() {
     return {
       currentTab: "dashboard",
       userMenuActive: false,
-      mobileUserMenuActive: false
+      mobileUserMenuActive: false,
+      showRepoList: false
     };
-  },
-  mounted() {
-    this.currentTab = router.currentRoute?.path.substr(1);
   },
   computed: {
     getUserPhotoURL() {
@@ -159,11 +206,24 @@ export default {
     },
     getUserGithub() {
       return store.state.currentUser.githubId;
+    },
+    currentAddedRepos() {
+      return store.state.currentUser.repos;
+    }
+  },
+  mounted() {
+    this.currentTab = router.currentRoute?.path.substr(1);
+    if (this.currentTab.includes("repo")) {
+      this.currentTab = "repo";
     }
   },
   methods: {
     updateTab: function(tab) {
-      this.currentTab = tab;
+      if (tab == "repo") {
+        this.showRepoList = !this.showRepoList;
+      } else {
+        this.currentTab = tab;
+      }
     },
     checkTab: function(tab) {
       if (tab == "dashboard") {
@@ -196,9 +256,23 @@ export default {
         })
         .catch(function(error) {
           // An error happened.
-          console.log("Navigation logout", error);
+          console.error("Navigation logout", error);
           vm.userMenuActive = false;
         });
+    },
+    takeToRepoPage: function(id) {
+      if (
+        this.$route.params &&
+        this.$route.params.id &&
+        this.$route.params.id != id
+      ) {
+        router.push(`/repo/${id}#`);
+        this.currentTab = "repo";
+      } else if (!this.$route.params || !this.$route.params.id) {
+        router.push(`/repo/${id}#`);
+        this.currentTab = "repo";
+      }
+      this.showRepoList = false;
     }
   }
 };

@@ -17,7 +17,7 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: "/repo/:name",
+    path: "/repo/:id",
     name: "repo",
     component: Repo,
     props: true,

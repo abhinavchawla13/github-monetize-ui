@@ -1,11 +1,12 @@
 @tailwind base;
-
 .active-tab {
     @apply text-white bg-gray-900;
 }
+
 .non-active-tab {
     @apply text-gray-300;
 }
+
 .non-active-tab:hover {
     @apply text-white bg-gray-700;
 }
@@ -24,3 +25,4 @@
 
 @tailwind components;
 @tailwind utilities;
+@import '~vuejs-noty/dist/vuejs-noty.css';

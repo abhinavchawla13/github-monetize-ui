@@ -2,8 +2,10 @@
   <div id="app">
     <Navigation
       v-if="isLoggedIn"
-      v-on:userLogout="completeLogout($event)"
-      v-on:userLogin="completeLogin($event)"
+      @userLogout="completeLogout($event)"
+      @userLogin="completeLogin($event)"
+      v-click-outside="onClickOutside"
+      :hideShowRepos="hideShowReposInc"
     />
     <router-view />
   </div>
@@ -15,15 +17,25 @@ import "firebase/auth";
 import router from "@/router";
 import Navigation from "@/components/Navigation.vue";
 import store from "@/store";
+import vClickOutside from "v-click-outside";
 
 export default {
   components: {
     Navigation
   },
+  directives: {
+    clickOutside: vClickOutside.directive
+  },
   data() {
     return {
-      userLoggedIn: false
+      userLoggedIn: false,
+      hideShowReposInc: 0
     };
+  },
+  computed: {
+    isLoggedIn() {
+      return store.state.currentUser.loggedIn;
+    }
   },
   mounted() {
     const user = firebase.auth().currentUser;
@@ -34,25 +46,21 @@ export default {
       router.push("/login", () => {});
     }
   },
-  computed: {
-    isLoggedIn() {
-      return store.state.currentUser.loggedIn;
-    }
-  },
   methods: {
     completeLogout: function(val) {
-      console.log(val);
       if (val) {
         this.userLoggedIn = false;
         router.push("/login", () => {});
       }
     },
     completeLogin: function(val) {
-      console.log("completeLogin", val);
       if (val) {
         this.userLoggedIn = true;
         router.push("/", () => {});
       }
+    },
+    onClickOutside() {
+      this.hideShowReposInc += 1;
     }
   }
 };

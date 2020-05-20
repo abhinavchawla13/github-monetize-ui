@@ -21,11 +21,11 @@
               <th
                 class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
               >Link</th>
-              <th class="px-6 py-3 border-b border-gray-200 bg-gray-50"></th>
+              <th class="px-6 py-3 border-b border-gray-200 bg-gray-50" />
             </tr>
           </thead>
 
-          <tbody class="bg-white" v-for="repo in repos" :key="repo.name">
+          <tbody v-for="repo in currentAddedRepos" :key="repo.name" class="bg-white">
             <tr>
               <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                 <div class="flex items-center">
@@ -35,7 +35,7 @@
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                <div class="text-sm leading-5 text-gray-500">{{ repo.lastUpdated }}</div>
+                <div class="text-sm leading-5 text-gray-500">{{ repo.updatedAt | formatDate }}</div>
               </td>
               <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                 <span
@@ -49,16 +49,20 @@
               </td>
               <td
                 class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500"
-              >{{ repo.link }}</td>
+              >{{ repo.link || 'No link generated yet' }}</td>
               <td
                 class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium"
               >
-                <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                <a
+                  href="#"
+                  class="text-indigo-600 hover:text-indigo-900"
+                  @click="takeToRepoPage(repo._id)"
+                >Edit</a>
               </td>
             </tr>
           </tbody>
 
-          <tbody v-if="!repos.length">
+          <tbody v-if="!currentAddedRepos.length">
             <tr>
               <td class="text-center py-5" colspan="4">No repositories added yet.</td>
             </tr>
@@ -70,24 +74,41 @@
 </template>
 
 <script>
+import axios from "axios";
+import * as firebase from "firebase";
+import store from "@/store";
+import router from "@/router";
+
 export default {
   data() {
-    return {
-      repos: [
-        {
-          name: "bethehope-api",
-          status: "published",
-          lastUpdated: "2020-02-12 1:32pm",
-          link: "https://document.com/12jh49k"
-        },
-        {
-          name: "bethehope-client-ui",
-          status: "unpublished",
-          lastUpdated: "2020-01-19 2:52pm",
-          link: "https://document.com/13jaq9k"
-        }
-      ]
-    };
+    return {};
+  },
+  async mounted() {
+    await this.loadAllRepos();
+  },
+  computed: {
+    currentAddedRepos() {
+      return store.state.currentUser.repos;
+    }
+  },
+  methods: {
+    loadAllRepos: async function() {
+      try {
+        const firebaseToken = await firebase.auth().currentUser.getIdToken();
+        const result = await axios.get(
+          `${process.env.VUE_APP_API_URL}/users/repos`,
+          {
+            headers: { Authorization: "Bearer " + firebaseToken }
+          }
+        );
+        store.commit("updateReposInformation", result.data.repos);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    takeToRepoPage: function(id) {
+      router.push(`/repo/${id}#`);
+    }
   }
 };
 </script>
