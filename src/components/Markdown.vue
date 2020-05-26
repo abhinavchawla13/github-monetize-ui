@@ -55,6 +55,11 @@ export default {
           this.$noty.error("There was an error saving");
         }
       }
+    },
+    currentrepomd: async function(newVal, oldVal) {
+      if (newVal != oldVal) {
+        this.input = newVal;
+      }
     }
   },
   data() {

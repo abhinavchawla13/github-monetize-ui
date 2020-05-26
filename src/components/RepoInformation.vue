@@ -76,7 +76,7 @@
         <span v-if="!editOn" class="sm:block shadow-sm rounded-md">
           <button
             type="button"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out"
+            class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out"
             @click="openEdit"
           >
             <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
@@ -91,7 +91,7 @@
         <span v-if="editOn" class="sm:block shadow-sm rounded-md">
           <button
             type="button"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out"
+            class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:text-gray-800 active:bg-gray-50 transition duration-150 ease-in-out"
             @click="saveMarkdown"
           >
             <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
@@ -104,9 +104,10 @@
         </span>
 
         <span class="sm:block mx-3 shadow-sm rounded-md">
-          <button
-            type="button"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:text-gray-800 active:bg-gray-50 active:text-gray-800 transition duration-150 ease-in-out"
+          <a
+            :href="updatedRepo.link"
+            target="_blank"
+            class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:text-gray-800 active:bg-gray-50 active:text-gray-800 transition duration-150 ease-in-out"
           >
             <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -117,13 +118,13 @@
               />
             </svg>
             View
-          </button>
+          </a>
         </span>
 
         <span class="shadow-sm rounded-md" v-if="updatedRepo.status == 'published'">
           <button
             type="button"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out"
+            class="cursor-pointer inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out"
             @click="unpublish"
             v-bind:class="{ 'opacity-50': editOn, 'cursor-not-allowed': editOn }"
             :disabled="editOn"
@@ -141,7 +142,7 @@
         <span class="shadow-sm rounded-md" v-if="updatedRepo.status == 'unpublished'">
           <button
             type="button"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out"
+            class="cursor-pointer inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out"
             @click="publish"
             v-bind:class="{ 'opacity-50': editOn, 'cursor-not-allowed': editOn }"
             :disabled="editOn"
@@ -206,10 +207,10 @@ export default {
               headers: { Authorization: "Bearer " + firebaseToken }
             }
           );
-          this.updatedRepo = result.data.repo;
-          this.$noty.success("README: Updated with monetized link");
+          this.updatedRepo.status = result.data.repo.status;
+          this.$noty.success("README.md: Updated with monetized link");
         } catch (err) {
-          console.error(err);
+          this.$noty.error(err);
           this.$noty.error("Sorry, repository was not published");
         }
       }
@@ -227,10 +228,10 @@ export default {
               headers: { Authorization: "Bearer " + firebaseToken }
             }
           );
-          this.updatedRepo = result.data.repo;
-          this.$noty.success("README: Updated with original markdown");
+          this.updatedRepo.status = result.data.repo.status;
+          this.$noty.success("README.md: Updated with the markdown");
         } catch (err) {
-          console.error(err);
+          this.$noty.error(err);
           this.$noty.error("Sorry, repository was not unpublished");
         }
       }

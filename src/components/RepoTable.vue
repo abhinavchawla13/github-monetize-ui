@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col">
     <div
-      class="mx-auto w-11/12 mx-4 py-8 px-4 overflow-x-auto md:w-5/6 lg:w-5/6 sm:px-6 lg:py-8 lg:px-8 lg:flex lg:items-center lg:justify-between lg:max-w-screen-xl"
+      class="mx-auto w-11/12 mx-4 py-8 px-4 overflow-x-auto md:w-11/12 lg:w-5/6 sm:px-6 lg:py-8 lg:px-8 lg:flex lg:items-center lg:justify-between lg:max-w-screen-xl"
     >
       <div
-        class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200"
+        class="align-middle inline-block min-w-full shadow overflow-x-auto sm:rounded-lg border-b border-gray-200"
       >
         <table class="min-w-full">
           <thead>
@@ -26,11 +26,14 @@
           </thead>
 
           <tbody v-for="repo in currentAddedRepos" :key="repo.name" class="bg-white">
-            <tr>
+            <tr class="hover:bg-gray-100">
               <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                 <div class="flex items-center">
                   <div class="ml-4">
-                    <div class="text-sm leading-5 font-medium text-gray-900">{{ repo.name }}</div>
+                    <div
+                      @click="takeToRepoPage(repo._id)"
+                      class="cursor-pointer text-sm leading-5 font-medium text-gray-900"
+                    >{{ repo.name }}</div>
                   </div>
                 </div>
               </td>
@@ -49,7 +52,15 @@
               </td>
               <td
                 class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500"
-              >{{ repo.link || 'No link generated yet' }}</td>
+              >
+                <a
+                  v-if="repo.link"
+                  class="cursor-pointer hover:underline"
+                  :href="repo.link"
+                  target="_blank"
+                >{{ repo.link || 'No link generated yet' }}</a>
+                <span v-if="!repo.link">No link generated yet</span>
+              </td>
               <td
                 class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium"
               >
@@ -103,7 +114,7 @@ export default {
         );
         store.commit("updateReposInformation", result.data.repos);
       } catch (error) {
-        console.error(error);
+        this.$noty.error(error);
       }
     },
     takeToRepoPage: function(id) {

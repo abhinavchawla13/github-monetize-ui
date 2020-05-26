@@ -65,14 +65,14 @@
         <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
           <button
             type="button"
-            class="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+            class="cursor-pointer inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150 sm:text-sm sm:leading-5"
             @click="connectRepo()"
           >Connect</button>
         </span>
         <span class="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
           <button
             type="button"
-            class="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+            class="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5"
             @click="closeModal()"
           >Cancel</button>
         </span>
@@ -129,7 +129,7 @@ export default {
           await this.loadAllRepos();
           this.error = "";
         } catch (err) {
-          console.error(err);
+          this.$noty.error(err);
           this.error = "Sorry, repository was not be connected";
         }
       }
@@ -152,7 +152,7 @@ export default {
         });
         this.allRepos = result.data.repos;
       } catch (error) {
-        console.error(error);
+        this.$noty.error(error);
       }
     },
     storeRepo: async function(repo) {
@@ -161,7 +161,7 @@ export default {
         this.selectedFullname = repo.full_name;
         this.filteredRepos = [];
       } catch (err) {
-        console.error(err);
+        this.$noty.error(err);
       }
     },
     loadAllRepos: async function() {
@@ -176,7 +176,7 @@ export default {
         // this.repos = result.data.repos;
         store.commit("updateReposInformation", result.data.repos);
       } catch (error) {
-        console.error(error);
+        this.$noty.error(error);
       }
     }
   }

@@ -1,3 +1,7 @@
+div.markdown-body code::before, div.markdown-body code::after {
+  content: none !important;
+}
+
 #editor {
   margin: auto !important;
   height: 60vh !important;
@@ -569,7 +573,7 @@ div.markdown-body kbd {
 
 div.markdown-body :after, div.markdown-body :before {
   display: table !important;
-  content: "" !important;
+  content: "";
 }
 
 div.markdown-body :after {

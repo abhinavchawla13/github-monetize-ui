@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Navigation
-      v-if="isLoggedIn"
+      v-if="isLoggedIn && !isViewPage"
       @userLogout="completeLogout($event)"
       @userLogin="completeLogin($event)"
       v-click-outside="onClickOutside"
@@ -35,6 +35,9 @@ export default {
   computed: {
     isLoggedIn() {
       return store.state.currentUser.loggedIn;
+    },
+    isViewPage() {
+      return this.$route.name == "view";
     }
   },
   mounted() {
@@ -62,6 +65,11 @@ export default {
     onClickOutside() {
       this.hideShowReposInc += 1;
     }
+  },
+  metaInfo: {
+    title: "Github Documentor",
+    // override the parent template and just use the above title only
+    titleTemplate: null
   }
 };
 </script>

@@ -48,7 +48,7 @@ export default {
     try {
       await this.getCurrentRepoInfo();
     } catch (err) {
-      console.error(err);
+      return;
     }
   },
   methods: {

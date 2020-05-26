@@ -13,7 +13,7 @@
               >Dashboard</router-link>
               <a
                 v-if="currentAddedRepos.length"
-                class="ml-4 px-3 py-2 rounded-md text-sm font-medium"
+                class="ml-4 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                 :class="{'active-tab': checkTab('repo'), 'non-active-tab': !checkTab('repo')}"
                 @click="updateTab('repo')"
               >Repositories</a>
@@ -55,7 +55,7 @@
           >
             <div class="bg-white" v-for="repo in currentAddedRepos" :key="repo._id">
               <div
-                class="block px-4 py-4 text-sm text-gray-700 hover:bg-gray-100"
+                class="block px-4 py-4 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                 role="menuitem"
                 @click="takeToRepoPage(repo._id)"
               >{{repo.name}}</div>
@@ -93,7 +93,7 @@
               <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
                 <div v-if="userMenuActive" class="rounded-md bg-white overflow-hidden">
                   <div
-                    class="block px-4 py-4 text-sm text-gray-700 hover:bg-gray-100"
+                    class="cursor-pointer block px-4 py-4 text-sm text-gray-700 hover:bg-gray-100"
                     role="menuitem"
                     @click="logout()"
                   >Logout</div>
@@ -256,7 +256,7 @@ export default {
         })
         .catch(function(error) {
           // An error happened.
-          console.error("Navigation logout", error);
+          this.$noty.error(error);
           vm.userMenuActive = false;
         });
     },

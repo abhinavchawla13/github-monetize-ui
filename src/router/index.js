@@ -3,18 +3,32 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from "../views/Login.vue";
 import Repo from "../views/Repo.vue";
+import View from "../views/View.vue";
+import VueMeta from 'vue-meta';
+
+// const Home = () => import('../views/Home.vue')
+// const Login = () => import('../views/Login.vue')
+// const Repo = () => import('../views/Repo.vue')
+// const View = () => import('../views/View.vue')
 
 import * as firebase from "firebase/app";
 import "firebase/auth";
 
+Vue.use(VueMeta);
 Vue.use(VueRouter)
 
 const routes = [
+
   {
-    path: '/',
-    name: 'dashboard',
-    component: Home,
-    meta: { requiresAuth: true }
+    path: "/login",
+    name: "login",
+    component: Login
+  },
+  {
+    path: "/view/:id",
+    name: "view",
+    props: true,
+    component: View
   },
   {
     path: "/repo/:id",
@@ -24,16 +38,16 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: "/login",
-    name: "login",
-    component: Login
+    path: '/',
+    name: 'dashboard',
+    component: Home,
+    meta: { requiresAuth: true }
   },
   { path: '*', redirect: '/' }
 ]
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
   routes
 })
 

@@ -9,7 +9,7 @@
           class="text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-2xl sm:leading-10"
         >
           Ready to get monetize your work?
-          <br>
+          <br />
           <span class="text-indigo-600 sm:text-4xl">Let's add your payment wallet pointer</span>
         </h2>
         <h2
@@ -17,30 +17,27 @@
           class="text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-2xl sm:leading-10"
         >
           Your wallet pointer
-          <br>
+          <br />
           <span class="text-indigo-600 sm:text-4xl">{{ getWalletPointer }}</span>
         </h2>
         <div class="mt-8 flex lg:flex-shrink-0 lg:mt-0">
           <div class="inline-flex rounded-md shadow">
             <a
               v-if="getWalletPointerNotExists"
-              class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+              class="cursor-pointer inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
               @click="openWalletModal()"
             >Add Wallet</a>
 
             <a
               v-if="!getWalletPointerNotExists"
-              class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+              class="cursor-pointer inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
               @click="openWalletModal()"
             >Update Wallet</a>
           </div>
         </div>
       </div>
     </div>
-    <WalletModal
-      v-if="showWalletModal"
-      @closePointer="toggleWalletModal($event)"
-    />
+    <WalletModal v-if="showWalletModal" @closePointer="toggleWalletModal($event)" />
   </div>
 </template>
 

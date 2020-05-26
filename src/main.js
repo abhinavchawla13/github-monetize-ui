@@ -5,11 +5,13 @@ import firebase from 'firebase/app'
 
 import '@/assets/styles/index.css';
 import '@/assets/styles/markdown.css';
-import router from './router'
-import store from './store'
-import moment from 'moment'
+import router from './router';
+import store from './store';
+import moment from 'moment';
 
-import VueNoty from 'vuejs-noty'
+import VueNoty from 'vuejs-noty';
+// import VueMeta from 'vue-meta';
+
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -39,6 +41,8 @@ Vue.use(VueNoty, {
   layout: 'bottomRight',
   timeout: 3000,
 })
+
+// Vue.use(VueMeta)
 
 // eslint-disable-next-line no-unused-vars
 firebase.auth().onAuthStateChanged(user => {
