@@ -46,7 +46,7 @@ export default {
       this.userLoggedIn = true;
     } else {
       this.userLoggedIn = false;
-      router.push("/login", () => {});
+      // router.push("/login", () => {});
     }
   },
   methods: {

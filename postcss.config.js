@@ -8,6 +8,7 @@ const purgecss = require('@fullhuman/postcss-purgecss')({
     './src/**/*.jsx',
     // etc.
   ],
+  whitelistPatterns: [/vuejs-noty/, /noty/],
 
   // This is the function used to extract class names from your templates
   defaultExtractor: content => {

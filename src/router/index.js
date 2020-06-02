@@ -20,15 +20,15 @@ Vue.use(VueRouter)
 const routes = [
 
   {
-    path: "/login",
-    name: "login",
-    component: Login
-  },
-  {
     path: "/view/:id",
     name: "view",
     props: true,
     component: View
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: Login
   },
   {
     path: "/repo/:id",

@@ -25,7 +25,7 @@
           class="mt-10 pl-4 text-2xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-2xl sm:leading-10"
         >The link is not published yet.</h2>
       </div>
-      <div v-if="!pointerLoaded || !isMonetizingUser">
+      <div v-if="!isMonetizingUser">
         <h2
           class="mt-10 pl-4 text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-2xl sm:leading-10"
         >This documentation is monetized. Please subscribe with Coil to view it.</h2>
@@ -36,7 +36,7 @@
         class="mt-10 pl-4 text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-2xl sm:leading-10"
       >This link is not associated with any repository.</h2>
     </div>
-    <div v-if="allLoaded && repoNotFound && !pointerLoaded">
+    <div v-if="checkComplete && !allLoaded && !pointerLoaded">
       <h2
         class="mt-10 pl-4 text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-2xl sm:leading-10"
       >Invalid payment pointer is linked with this documentation. Owner should update it with a working pointer.</h2>
@@ -57,7 +57,8 @@ export default {
       isMonetizingUser: false,
       repo: {},
       allLoaded: false,
-      repoNotFound: false
+      repoNotFound: false,
+      checkComplete: false
     };
   },
   computed: {
@@ -66,7 +67,6 @@ export default {
     }
   },
   async mounted() {
-    console.log("hello......");
     let result;
     try {
       result = await axios.get(
@@ -90,13 +90,14 @@ export default {
         this.repo = result.data.repo;
         this.isMonetizingUser = true;
         this.allLoaded = true;
+        this.checkComplete = true;
         // if (!document.monetization.state === "started") {
         // }
       });
     } else {
       this.isMonetizingUser = false;
       this.allLoaded = true;
-      console.log("hello......22222");
+      this.checkComplete = true;
     }
   },
   metaInfo() {
