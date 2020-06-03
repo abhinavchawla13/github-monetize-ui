@@ -1,24 +1,27 @@
 # github-monetize-ui
+#### Hosted at: [https://github-monetize.web.app/](https://github-monetize.web.app/)
 
-## Project setup
-```
+
+## Running Locally
+
+Make sure you have [Node.js](http://nodejs.org/) (v12+, npm v6+) installed.
+
+```sh
+git clone https://github.com/abhinavchawla13/github-monetize-ui.git
+cd github-monetize-ui
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Screenshots
+Dashboard
+<img src="https://imgur.com/oxeb7RH.png"/>
 
-### Lints and fixes files
-```
-npm run lint
-```
+Edit documentation
+<img src="https://imgur.com/62FOpLj.png"/>
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Published on GitHub
+<img src="https://imgur.com/QZq2cmX.png"/>
+
+Viewing documentation
+<img src="https://imgur.com/iu3UwpN.png"/>
