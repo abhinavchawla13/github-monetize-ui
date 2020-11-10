@@ -14,18 +14,15 @@
               >Repository</th>
               <th
                 class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+              >Links</th>
+              <th
+                class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
               >Last Updated</th>
-              <th
-                class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-              >Status</th>
-              <th
-                class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-              >Link</th>
               <th class="px-6 py-3 border-b border-gray-200 bg-gray-50" />
             </tr>
           </thead>
 
-          <tbody v-for="repo in currentAddedRepos" :key="repo.name" class="bg-white">
+          <tbody v-for="repo in repos" :key="repo.name" class="bg-white">
             <tr class="hover:bg-gray-100">
               <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                 <div class="flex items-center">
@@ -37,29 +34,24 @@
                   </div>
                 </div>
               </td>
+
               <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                <div class="text-sm leading-5 text-gray-500">{{ repo.updatedAt | formatDate }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                <span v-if="repo.publishedBranches.length > 0">
+                  <a
+                    v-for="r in repo.publishedBranches"
+                    :key="r.branch"
+                    :href="repo.link + '/' + r.branch"
+                    target="_blank"
+                    class="px-2 mr-3 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+                  >{{r.branch}}</a>
+                </span>
                 <span
-                  v-if="repo.status == 'published'"
-                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
-                >Published</span>
-                <span
-                  v-if="repo.status == 'unpublished'"
+                  v-else
                   class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800"
                 >Unpublished</span>
               </td>
-              <td
-                class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500"
-              >
-                <a
-                  v-if="repo.link"
-                  class="cursor-pointer hover:underline"
-                  :href="repo.link"
-                  target="_blank"
-                >{{ repo.link || 'No link generated yet' }}</a>
-                <span v-if="!repo.link">No link generated yet</span>
+              <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                <div class="text-sm leading-5 text-gray-500">{{ repo.updatedAt | formatDate }}</div>
               </td>
               <td
                 class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium"
@@ -73,7 +65,7 @@
             </tr>
           </tbody>
 
-          <tbody v-if="!currentAddedRepos.length">
+          <tbody v-if="!repos.length">
             <tr>
               <td class="text-center py-5" colspan="4">No repositories added yet.</td>
             </tr>
@@ -85,38 +77,45 @@
 </template>
 
 <script>
-import axios from "axios";
-import * as firebase from "firebase";
 import store from "@/store";
 import router from "@/router";
 
 export default {
   data() {
-    return {};
+    return {
+      repos: []
+    };
   },
   async mounted() {
-    await this.loadAllRepos();
-  },
-  computed: {
-    currentAddedRepos() {
-      return store.state.currentUser.repos;
-    }
+    const allRepos = store.state.currentUser.repos;
+    allRepos.forEach(repo => {
+      this.repos.push({
+        _id: repo._id,
+        name: repo.name,
+        updatedAt: repo.updatedAt,
+        link: repo.link,
+        publishedBranches: repo.markdowns.filter(
+          md => md.status === "published"
+        )
+      });
+    });
   },
   methods: {
-    loadAllRepos: async function() {
-      try {
-        const firebaseToken = await firebase.auth().currentUser.getIdToken();
-        const result = await axios.get(
-          `${process.env.VUE_APP_API_URL}/users/repos`,
-          {
-            headers: { Authorization: "Bearer " + firebaseToken }
-          }
-        );
-        store.commit("updateReposInformation", result.data.repos);
-      } catch (error) {
-        this.$noty.error(error);
-      }
-    },
+    // loadAllRepos: async function() {
+    //   try {
+    //     const firebaseToken = await firebase.auth().currentUser.getIdToken();
+    //     const result = await axios.get(
+    //       `${process.env.VUE_APP_API_URL}/users/repos`,
+    //       {
+    //         headers: { Authorization: "Bearer " + firebaseToken }
+    //       }
+    //     );
+    //     store.commit("updateReposInformation", result.data.repos);
+    //   } catch (error) {
+    //     console.error(error);
+    //     this.$noty.error("Repos could not be loaded");
+    //   }
+    // },
     takeToRepoPage: function(id) {
       router.push(`/repo/${id}#`);
     }
@@ -124,5 +123,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

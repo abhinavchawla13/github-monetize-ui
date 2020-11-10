@@ -20,7 +20,7 @@ Vue.use(VueRouter)
 const routes = [
 
   {
-    path: "/view/:id",
+    path: "/view/:id/:branch",
     name: "view",
     props: true,
     component: View

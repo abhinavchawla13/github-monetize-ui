@@ -8,7 +8,9 @@
       style="backdrop-filter: blur(5px); background-color: rgba(255, 255, 255, .15); "
     >
       <div class="flex flex-col justify-center p-4">
-        <h1 class="pt-4 pb-6 text-xl text text-center text-white font-medium">Welcome to Documento!</h1>
+        <h1 class="pt-4 pb-6 text-xl text text-center text-white font-medium">
+          Welcome to Documento!
+        </h1>
         <button class="bg-white rounded py-2 px-4" @click="loginWithGithub">
           <svg class="fill-current inline-block h-6 w-6" viewBox="0 0 20 20">
             <path
@@ -21,7 +23,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import * as firebase from "firebase/app";
@@ -70,7 +71,7 @@ export default {
           photoURL: user.photoURL,
           githubId: resp.data.user.githubId,
           email: user.email,
-          paymentPointer: resp.data.user.paymentPointer
+          paymentPointers: resp.data.user.paymentPointers
         });
         router.push("/", () => {});
       } catch (error) {
@@ -81,5 +82,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -10,7 +10,9 @@
         >
           Have a repository in mind?
           <br />
-          <span class="text-indigo-600 sm:text-4xl">Connect your GitHub Repository</span>
+          <span class="text-indigo-600 sm:text-4xl"
+            >Connect your GitHub Repository</span
+          >
         </h2>
         <h2
           v-if="getWalletPointerNotExists"
@@ -18,15 +20,22 @@
         >
           Have a repository in mind?
           <br />
-          <span class="text-indigo-600 sm:text-4xl">First add a wallet pointer</span>
+          <span class="text-indigo-600 sm:text-4xl"
+            >First add a wallet pointer</span
+          >
         </h2>
         <div class="mt-8 flex lg:flex-shrink-0 lg:mt-0">
           <div class="inline-flex rounded-md shadow">
             <button
               class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out cursor-pointer"
-              :class="{'cursor-not-allowed': getWalletPointerNotExists, 'opacity-50': getWalletPointerNotExists}"
+              :class="{
+                'cursor-not-allowed': getWalletPointerNotExists,
+                'opacity-50': getWalletPointerNotExists
+              }"
               @click="openConnectRepoModal()"
-            >Connect Repository</button>
+            >
+              Connect Repository
+            </button>
           </div>
         </div>
       </div>
@@ -54,8 +63,8 @@ export default {
   computed: {
     getWalletPointerNotExists() {
       return (
-        !store.state.currentUser.paymentPointer ||
-        store.state.currentUser.paymentPointer == ""
+        !store.state.currentUser.paymentPointers ||
+        store.state.currentUser.paymentPointers == ""
       );
     }
   },
@@ -77,5 +86,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

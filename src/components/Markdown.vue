@@ -3,23 +3,24 @@
     <div class="labels-head m-auto flex items-stretch">
       <div class="flex-1 text-right pr-8 mb-2">
         <span
-          class="px-2 inline-flex text-sm py-1 px-4 leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800 relative"
+          class="inline-flex text-sm py-1 px-4 leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800 relative"
           style="bottom: -51px;"
         >Editor</span>
       </div>
       <div class="flex-1 text-right pr-10 mb-2">
         <span
-          class="mr-1 px-2 inline-flex text-sm py-1 px-4 leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800 relative"
+          class="mr-1 inline-flex text-sm py-1 px-4 leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800 relative"
           style="bottom: -51px;"
         >Output</span>
       </div>
     </div>
-    <div v-if="currentrepomd" id="editor">
+    <div id="editor">
       <textarea
         :disabled="disabled"
-        v-bind:class="{'opacity-50': disabled}"
+        v-bind:class="{ 'opacity-50': disabled }"
         :value="input"
         @input="update"
+        placeholder="Enter your markdown here.."
       />
       <div class="markdown-body" v-html="compiledMarkdown" />
     </div>
@@ -33,7 +34,13 @@ import axios from "axios";
 import * as firebase from "firebase";
 
 export default {
-  props: ["currentrepomd", "openEditor", "currentrepoId"],
+  props: [
+    "currentrepomd",
+    "openEditor",
+    "currentrepoId",
+    "currentBranch",
+    "currentPaymentPointerId"
+  ],
   watch: {
     openEditor: async function(newVal, oldVal) {
       // watch it, oldVal refers to editBoxOpen here
@@ -44,7 +51,9 @@ export default {
           await axios.patch(
             `${process.env.VUE_APP_API_URL}/repos/${this.currentrepoId}`,
             {
-              markdown: this.input
+              markdown: this.input,
+              branch: this.currentBranch,
+              paymentPointerId: this.currentPaymentPointerId
             },
             {
               headers: { Authorization: "Bearer " + firebaseToken }
@@ -81,5 +90,4 @@ export default {
 };
 </script>
 
-<style lang="css" scoped src="@/assets/styles/markdown.css">
-</style>
+<style lang="css" scoped src="@/assets/styles/markdown.css"></style>

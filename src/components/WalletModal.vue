@@ -28,7 +28,10 @@
           <div
             class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10"
           >
-            <svg class="fill-current text-indigo-500 inline-block h-7 w-7" viewBox="0 0 24 24">
+            <svg
+              class="fill-current text-indigo-500 inline-block h-7 w-7"
+              viewBox="0 0 24 24"
+            >
               <path
                 class="heroicon-ui"
                 d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm1-9h2a1 1 0 0 1 0 2h-2v2a1 1 0 0 1-2 0v-2H9a1 1 0 0 1 0-2h2V9a1 1 0 0 1 2 0v2z"
@@ -39,15 +42,22 @@
             <h3
               id="modal-headline"
               class="text-lg mt-2 leading-6 font-medium text-gray-900"
-            >Add Wallet Pointer</h3>
+            >
+              <span v-if="pointerUpdateType === 'add'">Add</span>
+              <span v-if="pointerUpdateType === 'update'">Update</span>
+              Wallet Pointer
+            </h3>
             <div class="mt-2">
-              <label class="mt-4 block text-sm leading-5 font-medium text-gray-700">Pointer link</label>
+              <label
+                class="mt-4 block text-sm leading-5 font-medium text-gray-700"
+                >Pointer link</label
+              >
               <div class="mt-1 relative rounded-md shadow-sm">
                 <input
                   id="pointer_link"
-                  v-model="paymentPointer"
                   class="form-input block w-full px-4 sm:text-sm sm:leading-5 focus:shadow-none"
                   placeholder="$ilp.gatehub.net/"
+                  v-model="paymentPointerLink"
                 />
               </div>
             </div>
@@ -57,24 +67,42 @@
       <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
         <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
           <button
-            v-if="getWalletPointerNotExists"
+            v-if="pointerUpdateType === 'add'"
             type="button"
             class="cursor-pointer inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150 sm:text-sm sm:leading-5"
             @click="savePointer()"
-          >Add</button>
+          >
+            Add
+          </button>
           <button
-            v-if="!getWalletPointerNotExists"
+            v-if="pointerUpdateType === 'update'"
             type="button"
             class="cursor-pointer inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150 sm:text-sm sm:leading-5"
             @click="savePointer()"
-          >Update</button>
+          >
+            Update
+          </button>
+        </span>
+        <span
+          class="mt-3 ml-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto"
+        >
+          <button
+            type="button"
+            v-if="pointerUpdateType === 'update'"
+            class="cursor-pointer inline-flex justify-center w-full rounded-md border border-red-300 px-4 py-2 bg-red-200 text-base leading-6 font-medium text-red-800 shadow-sm hover:text-red-500 focus:outline-none  transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+            @click="deletePointer()"
+          >
+            Delete
+          </button>
         </span>
         <span class="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
           <button
             type="button"
             class="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5"
             @click="closeModal()"
-          >Cancel</button>
+          >
+            Cancel
+          </button>
         </span>
       </div>
     </div>
@@ -86,40 +114,97 @@ import axios from "axios";
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import store from "../store";
+import _ from "lodash";
 
 export default {
+  props: ["pointerUpdateObj", "pointerUpdateType"],
   data() {
     return {
-      paymentPointer: store.state.currentUser.paymentPointer || ""
+      paymentPointers: store.state.currentUser.paymentPointers || "",
+      paymentPointerLink: _.get(this, "pointerUpdateObj.link") || ""
     };
   },
   computed: {
     getWalletPointerNotExists() {
       return (
-        !store.state.currentUser.paymentPointer ||
-        store.state.currentUser.paymentPointer == ""
+        !store.state.currentUser.paymentPointers ||
+        store.state.currentUser.paymentPointers == ""
       );
+    },
+    getPaymentPointer() {
+      if (this.pointerUpdateType == "update") {
+        return this.pointerUpdateObj.link;
+      } else {
+        return "";
+      }
     }
   },
   methods: {
     savePointer: async function() {
       let vm = this;
-      if (this.paymentPointer) {
+
+      if (this.paymentPointerLink) {
         try {
           const firebaseToken = await firebase.auth().currentUser.getIdToken();
-          await axios.patch(
-            `${process.env.VUE_APP_API_URL}/users/wallet`,
+
+          let resp;
+          if (this.pointerUpdateType === "add") {
+            resp = await axios.patch(
+              `${process.env.VUE_APP_API_URL}/users/wallet/add`,
+              {
+                paymentPointer: this.paymentPointerLink
+              },
+              {
+                headers: { Authorization: "Bearer " + firebaseToken }
+              }
+            );
+          } else {
+            resp = await axios.patch(
+              `${process.env.VUE_APP_API_URL}/users/wallet/update`,
+              {
+                paymentPointer: this.paymentPointerLink,
+                paymentPointerId: this.pointerUpdateObj._id
+              },
+              {
+                headers: { Authorization: "Bearer " + firebaseToken }
+              }
+            );
+          }
+
+          console.log(resp);
+          store.commit("updatePaymentPointers", resp.data.paymentPointers);
+          this.$noty.success("Wallet pointer updated!");
+          vm.$emit("closePointer", true);
+        } catch (err) {
+          console.log(err);
+          this.$noty.error(err);
+        }
+      }
+    },
+    deletePointer: async function() {
+      let vm = this;
+
+      if (this.pointerUpdateObj._id) {
+        try {
+          const firebaseToken = await firebase.auth().currentUser.getIdToken();
+
+          let resp;
+          resp = await axios.patch(
+            `${process.env.VUE_APP_API_URL}/users/wallet/remove`,
             {
-              paymentPointer: this.paymentPointer
+              paymentPointerId: this.pointerUpdateObj._id
             },
             {
               headers: { Authorization: "Bearer " + firebaseToken }
             }
           );
-          store.commit("updatePaymentPointer", this.paymentPointer);
-          this.$noty.success("Wallet pointer updated!");
+
+          console.log(resp);
+          store.commit("updatePaymentPointers", resp.data.paymentPointers);
+          this.$noty.success("Wallet pointer deleted!");
           vm.$emit("closePointer", true);
         } catch (err) {
+          console.log(err);
           this.$noty.error(err);
         }
       }
@@ -131,5 +216,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -9,17 +9,19 @@
           class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate text-left"
         >{{ updatedRepo.name }}</span>
         <span
-          v-if="updatedRepo.status == 'published'"
+          v-if="publishStatus == 'published'"
           class="ml-6 px-4 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 relative"
           style="bottom: 6px;"
-        >Published</span>
+        >Branch Published</span>
         <span
-          v-if="updatedRepo.status == 'unpublished'"
+          v-if="publishStatus == 'unpublished'"
           class="ml-6 px-4 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 relative"
           style="bottom: 6px;"
-        >Unpublished</span>
-        <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
-          <div class="mt-2 flex items-center text-sm leading-5 text-gray-500 sm:mr-6">
+        >Branch Unpublished</span>
+        <!-- <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap">
+          <div
+            class="mt-2 flex items-center text-sm leading-5 text-gray-500 sm:mr-6"
+          >
             <svg
               class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
               fill="currentColor"
@@ -34,41 +36,42 @@
                 d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"
               />
             </svg>
-            <span v-text=" updatedRepo.private ? 'Private' : 'Public'"></span>
-          </div>
-          <div class="mt-2 flex items-center text-sm leading-5 text-gray-500 sm:mr-6">
-            <svg
-              class="mr-1.5 h-4 w-4 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              style="margin-top: -3px;"
-            >
-              <path
-                class="heroicon-ui"
-                d="M11.03 8h3.94l1.06-4.24a1 1 0 1 1 1.94.48L17.03 8H20a1 1 0 0 1 0 2h-3.47l-1 4H18a1 1 0 1 1 0 2h-2.97l-1.06 4.25a1 1 0 1 1-1.94-.49l.94-3.76H9.03l-1.06 4.25a1 1 0 1 1-1.94-.49L6.97 16H4a1 1 0 0 1 0-2h3.47l1-4H6a1 1 0 0 1 0-2h2.97l1.06-4.24a1 1 0 1 1 1.94.48L11.03 8zm-.5 2l-1 4h3.94l1-4h-3.94z"
-              />
-            </svg>
-            {{ updatedRepo.defaultBranch }} branch
+            <span v-text="updatedRepo.private ? 'Private' : 'Public'"></span>
           </div>
           <div
             class="mt-2 flex items-center text-sm leading-5 text-gray-500 sm:mr-6"
             v-if="updatedRepo.language"
           >
-            <svg class="mr-1.5 h-5 w-5x text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+            <svg
+              class="mr-1.5 h-5 w-5x text-gray-400"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 class="heroicon-ui"
                 d="M20.59 12l-3.3-3.3a1 1 0 1 1 1.42-1.4l4 4a1 1 0 0 1 0 1.4l-4 4a1 1 0 0 1-1.42-1.4l3.3-3.3zM3.4 12l3.3 3.3a1 1 0 0 1-1.42 1.4l-4-4a1 1 0 0 1 0-1.4l4-4a1 1 0 0 1 1.42 1.4L3.4 12zm7.56 8.24a1 1 0 0 1-1.94-.48l4-16a1 1 0 1 1 1.94.48l-4 16z"
               />
-              <!-- <path
-                d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
-                clip-rule="evenodd"
-              />-->
             </svg>
-            {{ updatedRepo.language}}
+            {{ updatedRepo.language }}
+          </div>
+        </div>-->
+        <div class="mt-1 flex">
+          <div class="mt-3 text-sm leading-5 text-gray-500 sm:mr-6">
+            <label id="listbox-label" class="ml-1 block font-bold text-gray-700">Branch</label>
+            <select class="text-base" style="max-width: 150px;" v-model="currentBranch">
+              <option v-for="branch in updatedRepo.branches" :key="branch">{{ branch }}</option>
+            </select>
+          </div>
+          <div class="mt-3 text-sm leading-5 text-gray-500 sm:mr-6">
+            <label id="listbox-label" class="ml-1 block font-bold text-gray-700">Payment Pointer</label>
+            <select
+              class="text-base focus:outline-none"
+              :value="currentPaymentPointerId"
+              @change="updatePaymentPointerId($event)"
+              :disabled="!editOn"
+            >
+              <option v-for="p in allPaymentPointer" :key="p._id" :value="p._id">{{ p.link }}</option>
+            </select>
           </div>
         </div>
       </div>
@@ -105,7 +108,7 @@
 
         <span class="sm:block mx-3 shadow-sm rounded-md">
           <a
-            :href="updatedRepo.link"
+            :href="updatedRepo.link + '/' + currentBranch"
             target="_blank"
             class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:text-gray-800 active:bg-gray-50 active:text-gray-800 transition duration-150 ease-in-out"
           >
@@ -121,12 +124,15 @@
           </a>
         </span>
 
-        <span class="shadow-sm rounded-md" v-if="updatedRepo.status == 'published'">
+        <span class="shadow-sm rounded-md" v-if="publishStatus == 'published'">
           <button
             type="button"
             class="cursor-pointer inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out"
             @click="unpublish"
-            v-bind:class="{ 'opacity-50': editOn, 'cursor-not-allowed': editOn }"
+            v-bind:class="{
+              'opacity-50': editOn,
+              'cursor-not-allowed': editOn
+            }"
             :disabled="editOn"
           >
             <svg class="-ml-1 mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
@@ -139,12 +145,15 @@
           </button>
         </span>
 
-        <span class="shadow-sm rounded-md" v-if="updatedRepo.status == 'unpublished'">
+        <span class="shadow-sm rounded-md" v-if="publishStatus == 'unpublished'">
           <button
             type="button"
             class="cursor-pointer inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out"
             @click="publish"
-            v-bind:class="{ 'opacity-50': editOn, 'cursor-not-allowed': editOn }"
+            v-bind:class="{
+              'opacity-50': editOn,
+              'cursor-not-allowed': editOn
+            }"
             :disabled="editOn"
           >
             <svg class="-ml-1 mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
@@ -169,20 +178,34 @@
 <script>
 import * as firebase from "firebase/app";
 import axios from "axios";
+import store from "../store";
 
 export default {
   props: ["currentrepo"],
   data() {
     return {
       editOn: false,
-      updatedRepo: this.currentrepo
+      updatedRepo: this.currentrepo,
+      currentBranch: this.currentrepo.branches[0],
+      currentPaymentPointerId: "",
+      publishStatus: "unpublished"
     };
+  },
+  computed: {
+    allPaymentPointer() {
+      return store.state.currentUser.paymentPointers;
+    }
   },
   watch: {
     currentrepo: async function(newVal, oldVal) {
       if (newVal.name != oldVal.name) {
         this.updatedRepo = newVal;
       }
+    },
+    currentBranch: function(newVal) {
+      this.$emit("branchChanged", newVal);
+      this.currentBranch = newVal;
+      this.currentPaymentPointer();
     }
   },
   methods: {
@@ -194,51 +217,70 @@ export default {
       this.editOn = false;
       this.$emit("saveMarkdown");
     },
-    publish: async function() {
-      if (this.updatedRepo.status == "unpublished") {
-        try {
-          const firebaseToken = await firebase.auth().currentUser.getIdToken();
-          const result = await axios.post(
-            `${process.env.VUE_APP_API_URL}/repos/publish`,
-            {
-              id: this.updatedRepo._id
-            },
-            {
-              headers: { Authorization: "Bearer " + firebaseToken }
-            }
-          );
-          this.updatedRepo.status = result.data.repo.status;
-          this.$noty.success("README.md: Updated with monetized link");
-        } catch (err) {
-          this.$noty.error(err);
-          this.$noty.error("Sorry, repository was not published");
+    currentPaymentPointer() {
+      const markdowns = this.updatedRepo.markdowns;
+      if (markdowns.length > 0) {
+        const filterMarkdown = markdowns.filter(
+          md => md.branch === this.currentBranch
+        );
+        if (filterMarkdown.length) {
+          this.currentPaymentPointerId = filterMarkdown[0].paymentPointerId._id;
+          this.publishStatus = filterMarkdown[0].status || "unpublished";
+          return;
         }
+      }
+      this.currentPaymentPointerId =
+        store.state.currentUser.paymentPointers[0]._id;
+    },
+    publish: async function() {
+      try {
+        const firebaseToken = await firebase.auth().currentUser.getIdToken();
+        await axios.post(
+          `${process.env.VUE_APP_API_URL}/repos/publish`,
+          {
+            id: this.updatedRepo._id,
+            branch: this.currentBranch
+          },
+          {
+            headers: { Authorization: "Bearer " + firebaseToken }
+          }
+        );
+        this.publishStatus = "published";
+        this.$noty.success("README.md: Updated with monetized link");
+      } catch (err) {
+        this.$noty.error(err);
+        this.$noty.error("Sorry, repository was not published");
       }
     },
     unpublish: async function() {
-      if (this.updatedRepo.status == "published") {
-        try {
-          const firebaseToken = await firebase.auth().currentUser.getIdToken();
-          const result = await axios.post(
-            `${process.env.VUE_APP_API_URL}/repos/unpublish`,
-            {
-              id: this.updatedRepo._id
-            },
-            {
-              headers: { Authorization: "Bearer " + firebaseToken }
-            }
-          );
-          this.updatedRepo.status = result.data.repo.status;
-          this.$noty.success("README.md: Updated with the markdown");
-        } catch (err) {
-          this.$noty.error(err);
-          this.$noty.error("Sorry, repository was not unpublished");
-        }
+      try {
+        const firebaseToken = await firebase.auth().currentUser.getIdToken();
+        await axios.post(
+          `${process.env.VUE_APP_API_URL}/repos/unpublish`,
+          {
+            id: this.updatedRepo._id,
+            branch: this.currentBranch
+          },
+          {
+            headers: { Authorization: "Bearer " + firebaseToken }
+          }
+        );
+        this.publishStatus = "unpublished";
+        this.$noty.success("README.md: Updated with the markdown");
+      } catch (err) {
+        this.$noty.error(err);
+        this.$noty.error("Sorry, repository was not unpublished");
       }
+    },
+    updatePaymentPointerId: async function(event) {
+      this.currentPaymentPointerId = event.target.value;
+      this.$emit("paymentPointerIdChanged", event.target.value);
     }
+  },
+  mounted() {
+    this.currentPaymentPointer();
   }
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -41,6 +41,7 @@
                   placeholder="github-repo-name"
                   v-model="searchString"
                   v-on:input="filter"
+                  autocomplete="off"
                 />
 
                 <div
@@ -56,7 +57,11 @@
                   </div>
                 </div>
               </div>
-              <span v-if="error && error.length" class="text-red-400 text-xs">{{ error }}</span>
+              <span v-if="error && error.length" class="text-red-400 text-xs">
+                {{
+                error
+                }}
+              </span>
             </div>
           </div>
         </div>
@@ -100,8 +105,8 @@ export default {
   computed: {
     getWalletPointerNotExists() {
       return (
-        !store.state.currentUser.paymentPointer ||
-        store.state.currentUser.paymentPointer == ""
+        !store.state.currentUser.paymentPointers ||
+        store.state.currentUser.paymentPointers == ""
       );
     }
   },
@@ -168,13 +173,13 @@ export default {
       try {
         const firebaseToken = await firebase.auth().currentUser.getIdToken();
         const result = await axios.get(
-          `${process.env.VUE_APP_API_URL}/users/repos`,
+          `${process.env.VUE_APP_API_URL}/users/`,
           {
             headers: { Authorization: "Bearer " + firebaseToken }
           }
         );
         // this.repos = result.data.repos;
-        store.commit("updateReposInformation", result.data.repos);
+        store.commit("updateReposInformation", result.data.user.repos);
       } catch (error) {
         this.$noty.error(error);
       }
@@ -183,5 +188,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
