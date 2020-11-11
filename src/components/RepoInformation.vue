@@ -9,12 +9,12 @@
           class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate text-left"
         >{{ updatedRepo.name }}</span>
         <span
-          v-if="publishStatus == 'published'"
+          v-if="publishStatus == 'published' || publishCheck"
           class="ml-6 px-4 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 relative"
           style="bottom: 6px;"
         >Branch Published</span>
         <span
-          v-if="publishStatus == 'unpublished'"
+          v-if="publishStatus == 'unpublished' && !publishCheck"
           class="ml-6 px-4 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 relative"
           style="bottom: 6px;"
         >Branch Unpublished</span>
@@ -124,7 +124,7 @@
           </a>
         </span>
 
-        <span class="shadow-sm rounded-md" v-if="publishStatus == 'published'">
+        <span class="shadow-sm rounded-md" v-if="publishStatus == 'published' || publishCheck">
           <button
             type="button"
             class="cursor-pointer inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out"
@@ -145,7 +145,7 @@
           </button>
         </span>
 
-        <span class="shadow-sm rounded-md" v-if="publishStatus == 'unpublished'">
+        <span class="shadow-sm rounded-md" v-if="publishStatus == 'unpublished' && !publishCheck">
           <button
             type="button"
             class="cursor-pointer inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out"
@@ -181,14 +181,15 @@ import axios from "axios";
 import store from "../store";
 
 export default {
-  props: ["currentrepo"],
+  props: ["currentrepo", "publishedSuccess"],
   data() {
     return {
       editOn: false,
       updatedRepo: this.currentrepo,
       currentBranch: this.currentrepo.branches[0],
       currentPaymentPointerId: "",
-      publishStatus: "unpublished"
+      publishStatus: "unpublished",
+      publishCheck: false
     };
   },
   computed: {
@@ -206,6 +207,11 @@ export default {
       this.$emit("branchChanged", newVal);
       this.currentBranch = newVal;
       this.currentPaymentPointer();
+    },
+    publishedSuccess: function(newVal) {
+      if (newVal) {
+        this.publishCheck = true;
+      }
     }
   },
   methods: {
@@ -223,34 +229,20 @@ export default {
         const filterMarkdown = markdowns.filter(
           md => md.branch === this.currentBranch
         );
+        console.log(filterMarkdown);
         if (filterMarkdown.length) {
           this.currentPaymentPointerId = filterMarkdown[0].paymentPointerId._id;
           this.publishStatus = filterMarkdown[0].status || "unpublished";
           return;
+        } else {
+          this.publishStatus = "unpublished";
         }
       }
       this.currentPaymentPointerId =
         store.state.currentUser.paymentPointers[0]._id;
     },
-    publish: async function() {
-      try {
-        const firebaseToken = await firebase.auth().currentUser.getIdToken();
-        await axios.post(
-          `${process.env.VUE_APP_API_URL}/repos/publish`,
-          {
-            id: this.updatedRepo._id,
-            branch: this.currentBranch
-          },
-          {
-            headers: { Authorization: "Bearer " + firebaseToken }
-          }
-        );
-        this.publishStatus = "published";
-        this.$noty.success("README.md: Updated with monetized link");
-      } catch (err) {
-        this.$noty.error(err);
-        this.$noty.error("Sorry, repository was not published");
-      }
+    publish: function() {
+      this.$emit("publishModalOpen", true);
     },
     unpublish: async function() {
       try {
@@ -266,6 +258,7 @@ export default {
           }
         );
         this.publishStatus = "unpublished";
+        this.publishCheck = false;
         this.$noty.success("README.md: Updated with the markdown");
       } catch (err) {
         this.$noty.error(err);

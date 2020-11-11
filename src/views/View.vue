@@ -9,7 +9,7 @@
       >
         <h2
           class="mt-10 pl-4 text-4xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-3xl sm:leading-10"
-        >{{ repo.fullname}}</h2>
+        >{{ repo.fullname }}</h2>
         <img
           v-if="repo.status == 'published'"
           class="mt-2 pl-4 pb-5"
@@ -28,7 +28,10 @@
       <div v-if="!isMonetizingUser">
         <h2
           class="mt-10 pl-4 text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-2xl sm:leading-10"
-        >This documentation is monetized. Please subscribe with Coil to view it.</h2>
+        >
+          This documentation is monetized. Please subscribe with Coil to view
+          it.
+        </h2>
       </div>
     </div>
     <div v-if="allLoaded && repoNotFound">
@@ -39,7 +42,10 @@
     <div v-if="checkComplete && !allLoaded && !pointerLoaded">
       <h2
         class="mt-10 pl-4 text-3xl leading-9 text-left font-extrabold tracking-tight text-gray-900 sm:text-2xl sm:leading-10"
-      >Invalid payment pointer is linked with this documentation. Owner should update it with a working pointer.</h2>
+      >
+        Invalid payment pointer is linked with this documentation. Owner should
+        update it with a working pointer.
+      </h2>
     </div>
   </div>
 </template>
@@ -49,12 +55,13 @@ import axios from "axios";
 import marked from "marked";
 
 export default {
-  props: ["id"],
+  props: ["id", "branch"],
   data() {
     return {
       paymentPointer: "",
       pointerLoaded: false,
       isMonetizingUser: false,
+      markdown: "",
       repo: {},
       allLoaded: false,
       repoNotFound: false,
@@ -63,14 +70,14 @@ export default {
   },
   computed: {
     compiledMarkdown: function() {
-      return marked(this.repo.markdown, { sanitize: true });
+      return marked(this.markdown, { sanitize: true });
     }
   },
   async mounted() {
     let result;
     try {
       result = await axios.get(
-        `${process.env.VUE_APP_API_URL}/repos/pointer/${this.id}`
+        `${process.env.VUE_APP_API_URL}/repos/pointer/${this.id}/${this.branch}`
       );
     } catch (err) {
       this.repoNotFound = true;
@@ -81,21 +88,41 @@ export default {
     this.paymentPointer = result.data.paymentPointer;
     this.pointerLoaded = false;
 
-    if (document.monetization) {
-      document.monetization.addEventListener("monetizationstart", async () => {
-        const result = await axios.get(
-          `${process.env.VUE_APP_API_URL}/repos/public/${this.id}`
+    // ! for dev purposes
+    if (
+      process.env.VUE_APP_ENABLE_COIL_REQUIREMENT === true ||
+      process.env.VUE_APP_ENABLE_COIL_REQUIREMENT === "true"
+    ) {
+      if (document.monetization) {
+        document.monetization.addEventListener(
+          "monetizationstart",
+          async () => {
+            const resp = await axios.get(
+              `${process.env.VUE_APP_API_URL}/repos/public/${this.id}/${this.branch}`
+            );
+            this.pointerLoaded = true;
+            this.markdown = resp.data.markdown;
+            this.repo = resp.data.repo;
+            this.isMonetizingUser = true;
+            this.allLoaded = true;
+            this.checkComplete = true;
+            // if (!document.monetization.state === "started") {
+            // }
+          }
         );
-        this.pointerLoaded = true;
-        this.repo = result.data.repo;
-        this.isMonetizingUser = true;
+      } else {
+        this.isMonetizingUser = false;
         this.allLoaded = true;
         this.checkComplete = true;
-        // if (!document.monetization.state === "started") {
-        // }
-      });
+      }
     } else {
-      this.isMonetizingUser = false;
+      const resp = await axios.get(
+        `${process.env.VUE_APP_API_URL}/repos/public/${this.id}/${this.branch}`
+      );
+      this.pointerLoaded = true;
+      this.markdown = resp.data.markdown;
+      this.repo = resp.data.repo;
+      this.isMonetizingUser = true;
       this.allLoaded = true;
       this.checkComplete = true;
     }

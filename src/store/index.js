@@ -50,6 +50,21 @@ const store = new Vuex.Store({
     updateReposInformation(state, repos) {
       state.currentUser.repos = repos;
     },
+    updateRepoInformation(state, repo) {
+      let index = 0;
+      let found = false;
+      if (state.currentUser.repos && state.currentUser.repos.length > 0) {
+        for (index = 0; index < state.currentUser.repos.length; index++) {
+          if (state.currentUser.repos[index]._id === repo._id) {
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          state.currentUser.repos[index] = repo;
+        }
+      }
+    },
     updateUserInfo(state, userInfo) {
       const { paymentPointers, repos } = userInfo;
       state.currentUser.paymentPointers = paymentPointers;
