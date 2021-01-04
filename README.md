@@ -1,4 +1,5 @@
-# github-monetize-ui
+# GitHub: Monetize Documentation - UI
+### Backend code is available at: [https://github.com/abhinavchawla13/github-monetize-api](https://github.com/abhinavchawla13/github-monetize-api)
 #### Hosted at: [https://github-monetize.web.app/](https://github-monetize.web.app/)
 
 
