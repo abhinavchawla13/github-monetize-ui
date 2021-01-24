@@ -28,7 +28,7 @@ export default {
     try {
       await this.getCurrentUserInfo();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   },
   methods: {

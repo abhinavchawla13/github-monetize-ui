@@ -65,7 +65,7 @@
             </tr>
           </tbody>
 
-          <tbody v-if="!repos.length">
+          <tbody v-if="!repos || (repos || !repos.length)">
             <tr>
               <td class="text-center py-5" colspan="4">No repositories added yet.</td>
             </tr>
@@ -85,6 +85,27 @@ export default {
     return {
       repos: []
     };
+  },
+  watch: {
+    allRepos(newRepos) {
+      this.repos = [];
+      newRepos.forEach(repo => {
+        this.repos.push({
+          _id: repo._id,
+          name: repo.name,
+          updatedAt: repo.updatedAt,
+          link: repo.link,
+          publishedBranches: repo.markdowns.filter(
+            md => md.status === "published"
+          )
+        });
+      });
+    }
+  },
+  computed: {
+    allRepos() {
+      return store.state.currentUser.repos;
+    }
   },
   async mounted() {
     const allRepos = store.state.currentUser.repos;

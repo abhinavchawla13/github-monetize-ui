@@ -229,7 +229,7 @@ export default {
         const filterMarkdown = markdowns.filter(
           md => md.branch === this.currentBranch
         );
-        console.log(filterMarkdown);
+        // console.log(filterMarkdown);
         if (filterMarkdown.length) {
           this.currentPaymentPointerId = filterMarkdown[0].paymentPointerId._id;
           this.publishStatus = filterMarkdown[0].status || "unpublished";

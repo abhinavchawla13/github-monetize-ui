@@ -89,6 +89,7 @@ export default {
     this.pointerLoaded = false;
 
     // ! for dev purposes
+    // Note: Look around better ways to check document.monetization
     if (
       process.env.VUE_APP_ENABLE_COIL_REQUIREMENT === true ||
       process.env.VUE_APP_ENABLE_COIL_REQUIREMENT === "true"
@@ -111,6 +112,7 @@ export default {
           }
         );
       } else {
+        console.log("main if false");
         this.isMonetizingUser = false;
         this.allLoaded = true;
         this.checkComplete = true;

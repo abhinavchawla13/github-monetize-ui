@@ -171,12 +171,12 @@ export default {
             );
           }
 
-          console.log(resp);
+          // console.log(resp);
           store.commit("updatePaymentPointers", resp.data.paymentPointers);
           this.$noty.success("Wallet pointer updated!");
           vm.$emit("closePointer", true);
         } catch (err) {
-          console.log(err);
+          // console.log(err);
           this.$noty.error(err);
         }
       }
@@ -199,12 +199,12 @@ export default {
             }
           );
 
-          console.log(resp);
+          // console.log(resp);
           store.commit("updatePaymentPointers", resp.data.paymentPointers);
           this.$noty.success("Wallet pointer deleted!");
           vm.$emit("closePointer", true);
         } catch (err) {
-          console.log(err);
+          // console.log(err);
           this.$noty.error(err);
         }
       }

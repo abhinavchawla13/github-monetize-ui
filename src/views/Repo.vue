@@ -100,6 +100,13 @@ export default {
       this.currentRepoLoaded = true;
       this.currentBranch = this.currentRepo.defaultBranch;
       store.commit("updateRepoInformation", result.data.repo);
+
+      if (result.data.repo.markdowns.length > 0) {
+        const firstMarkdown = result.data.repo.markdowns[0];
+        this.currentBranch = firstMarkdown.branch;
+        this.currentRepoMarkdown = firstMarkdown.value;
+        this.currentPaymentPointerId = firstMarkdown.paymentPointerId._id;
+      }
     },
     openEditer: function() {
       this.openEditerVal = true;
@@ -110,6 +117,7 @@ export default {
     branchChanged: function(newBranch) {
       this.currentBranch = newBranch;
       const markdowns = this.currentRepo.markdowns;
+      console.log("markdowns", markdowns);
       if (markdowns.length > 0) {
         const filterMarkdown = markdowns.filter(
           md => md.branch === this.currentBranch

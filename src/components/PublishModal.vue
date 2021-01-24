@@ -145,7 +145,7 @@ export default {
         this.$noty.success("README.md published!");
         this.$emit("closePublishModal", true, true);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
         this.$noty.error("Sorry, repository was not published");
       }
     },

@@ -69,7 +69,7 @@ export default {
   metaInfo: {
     title: "Github Documentor",
     // override the parent template and just use the above title only
-    titleTemplate: null
+    titleTemplate: "%s"
   }
 };
 </script>
